@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for extension &quot;solr&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="scheduler_fileindexqueueworker_title">File Index Queue Worker</label>
+			<label index="scheduler_fileindexqueueworker_description">Processes the files in the File Index Queue and sends them to Solr.</label>
+			<label index="scheduler_fileindexqueueworker_field_filesToIndexLimit">Number of files to index</label>
+		</languageKey>
+		<languageKey index="fr" type="array">
+			<label index="scheduler_fileindexqueueworker_title">Tâche de traitement de la file d'indexation des fichiers.</label>
+			<label index="scheduler_fileindexqueueworker_description">Traite les éléments de la file d'attente des fichiers et les envoie à Solr.</label>
+			<label index="scheduler_fileindexqueueworker_field_filesToIndexLimit">Nombre de fichier à indexer</label>
+		</languageKey>
+	</data>
+</T3locallang>

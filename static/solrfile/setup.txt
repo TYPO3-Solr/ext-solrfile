@@ -1,0 +1,49 @@
+
+plugin.tx_solr {
+
+	index {
+
+		files = 1
+		files {
+				// defines which files types to index. Comma separated list of file type suffixes, example: pdf, doc, docx
+			allowedTypes = *
+		}
+
+	}
+
+	search {
+
+		results {
+
+			fieldRenderingInstructions {
+
+				url = CASE
+				url {
+					tx_solr_file = TEXT
+					tx_solr_file {
+						typolink {
+							parameter.field = fileRelativePath
+							returnLast = url
+						}
+					}
+				}
+
+				link = CASE
+				link {
+					tx_solr_file = TEXT
+					tx_solr_file {
+						field = fileName
+
+						typolink {
+							parameter.field = fileRelativePath
+						}
+					}
+				}
+
+			}
+
+		}
+
+	}
+
+}
