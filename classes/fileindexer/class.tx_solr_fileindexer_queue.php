@@ -34,18 +34,46 @@
 class tx_solr_fileindexer_Queue extends tx_solr_indexqueue_Queue implements tx_solr_IndexQueueInitializationPostProcessor {
 
 	/**
-	 * Whether to use the referencing language during duplicate check.
+	 * Operator to use to combine multiple file duplicate check clauses.
 	 *
-	 * @var boolean
+	 * @var string
 	 */
-	protected $useLanguageForDuplicateCheck = FALSE;
+	protected $duplicateCheckOperator = 'AND';
 
 	/**
 	 * Whether to use the file checksum (sha1) during duplicate check.
 	 *
 	 * @var boolean
 	 */
-	protected $useFileChecksumForDuplicateCheck = FALSE;
+	protected $duplicateCheckUseFileChecksum = FALSE;
+
+	/**
+	 * Whether to use the file name during duplicate check.
+	 *
+	 * @var boolean
+	 */
+	protected $duplicateCheckUseFileName = FALSE;
+
+	/**
+	 * Whether to use the file path during duplicate check.
+	 *
+	 * @var boolean
+	 */
+	protected $duplicateCheckUseFilePath = FALSE;
+
+	/**
+	 * Whether to use the referencing language during duplicate check.
+	 *
+	 * @var boolean
+	 */
+	protected $duplicateCheckUseLanguage = FALSE;
+
+	/**
+	 * Whether to use the referencing document id during duplicate check.
+	 *
+	 * @var boolean
+	 */
+	protected $duplicateCheckUseReferenceDocumentId = FALSE;
 
 
 	/**
@@ -297,32 +325,47 @@ class tx_solr_fileindexer_Queue extends tx_solr_indexqueue_Queue implements tx_s
 	 * @return string SQL WHERE clause for file duplicate detection
 	 */
 	protected function getFileDuplicateDetectionClause(tx_solr_fileindexer_File $file) {
-		$fileDuplicateDetectionClause = 'root = ' . intval($file->getReferenceRootPageId())
+		$fileDuplicateDetectionClauseParts = array();
+		$fileDuplicateDetectionClause      = 'root = ' . intval($file->getReferenceRootPageId());
 
-		. ' AND file_name = '. $GLOBALS['TYPO3_DB']->fullQuoteStr(
-			$file->getName(),
-			'tx_solr_indexqueue_file'
-		)
-		. ' AND file_path = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
-			$file->getRelativePath(tx_solr_fileindexer_File::PATH_EXCLUDE_FILE_NAME),
-			'tx_solr_indexqueue_file'
-		)
-		. ' AND reference_document_id = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
-			$file->getReferencePageDocumentId(),
-			'tx_solr_indexqueue_file'
-		);
-
-		if ($this->useLanguageForDuplicateCheck) {
-			$fileDuplicateDetectionClause .= ' AND reference_sys_language_uid = '
-				. intval($file->getReferenceLanguage());
-		}
-
-		if ($this->useFileChecksumForDuplicateCheck) {
-			$fileDuplicateDetectionClause .= ' AND file_sha1 = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
+		if ($this->duplicateCheckUseFileChecksum) {
+			$fileDuplicateDetectionClauseParts[] = 'file_sha1 = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
 				$file->getSha1(),
 				'tx_solr_indexqueue_file'
 			);
 		}
+
+		if ($this->duplicateCheckUseFileName) {
+			$fileDuplicateDetectionClauseParts[] = 'file_name = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
+				$file->getName(),
+				'tx_solr_indexqueue_file'
+			);
+		}
+
+		if ($this->duplicateCheckUseFilePath) {
+			$fileDuplicateDetectionClauseParts[] = 'file_path = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
+				$file->getRelativePath(tx_solr_fileindexer_File::PATH_EXCLUDE_FILE_NAME),
+				'tx_solr_indexqueue_file'
+			);
+		}
+
+		if ($this->duplicateCheckUseLanguage) {
+			$fileDuplicateDetectionClauseParts[] = 'reference_sys_language_uid = '
+ 				. intval($file->getReferenceLanguage());
+		}
+
+		if ($this->duplicateCheckUseReferenceDocumentId) {
+			$fileDuplicateDetectionClauseParts[] = 'reference_document_id = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr(
+				$file->getReferencePageDocumentId(),
+				'tx_solr_indexqueue_file'
+			);
+		}
+
+			// compile the duplicate check clause
+		$fileDuplicateDetectionClause .= ' AND (' . implode(
+			' ' . $this->duplicateCheckOperator . ' ',
+			$fileDuplicateDetectionClauseParts
+		) . ')';
 
 		return $fileDuplicateDetectionClause;
 	}
@@ -440,21 +483,29 @@ class tx_solr_fileindexer_Queue extends tx_solr_indexqueue_Queue implements tx_s
 	}
 
 	/**
-	 * Sets whether to use the referencing language during duplicate check.
+	 * Sets the complete duplicate check configuration.
 	 *
-	 * @param boolean $useLanguage
+	 * @param array $duplicateCheckConfiguration
 	 */
-	public function setUseLanguageForDuplicateCheck($useLanguage) {
-		$this->useLanguageForDuplicateCheck = (boolean) $useLanguage;
-	}
+	public function setDuplicateCheckConfiguration(array $duplicateCheckConfiguration) {
+		$defaultConfiguration = array(
+			'operator'               => 'OR',
+			'useFileChecksum'        => 0,
+			'useFileName'            => 0,
+			'useFilePath'            => 0,
+			'useLanguage'            => 0,
+			'useReferenceDocumentId' => 0
+		);
 
-	/**
-	 * Gets whether to use the referencing language during duplicate check.
-	 *
-	 * @return boolean
-	 */
-	public function getUseLanguageForDuplicateCheck() {
-		return $this->useLanguageForDuplicateCheck;
+		$configuration = array_merge($defaultConfiguration, $duplicateCheckConfiguration);
+
+		$this->setDuplicateCheckOperator($configuration['operator']);
+
+		$this->setDuplicateCheckUseFileChecksum($configuration['useFileChecksum']);
+		$this->setDuplicateCheckUseFileName($configuration['useFileName']);
+		$this->setDuplicateCheckUseFilepath($configuration['useFilePath']);
+		$this->setDuplicateCheckUseLanguage($configuration['useLanguage']);
+		$this->setDuplicateCheckUseReferenceDocumentId($configuration['useReferenceDocumentId']);
 	}
 
 	/**
@@ -462,8 +513,8 @@ class tx_solr_fileindexer_Queue extends tx_solr_indexqueue_Queue implements tx_s
 	 *
 	 * @param boolean $useFileChecksum
 	 */
-	public function setUseFileChecksumForDuplicateCheck($useFileChecksum) {
-		$this->useFileChecksumForDuplicateCheck = (boolean) $useFileChecksum;
+	public function setDuplicateCheckUseFileChecksum($useFileChecksum) {
+		$this->duplicateCheckUseFileChecksum = (boolean) $useFileChecksum;
 	}
 
 	/**
@@ -471,8 +522,102 @@ class tx_solr_fileindexer_Queue extends tx_solr_indexqueue_Queue implements tx_s
 	 *
 	 * @return boolean
 	 */
-	public function getUseFileChecksumForDuplicateCheck() {
-		return $this->useFileChecksumForDuplicateCheck;
+	public function getDuplicateCheckUseFileChecksum() {
+		return $this->duplicateCheckUseFileChecksum;
+	}
+
+	/**
+	 * Sets whether to use the file name during duplicate check.
+	 *
+	 * @param boolean $useFileName
+	 */
+	public function setDuplicateCheckUseFileName($useFileName) {
+		$this->duplicateCheckUseFileName = (boolean) $useFileName;
+	}
+
+	/**
+	 * Gets whether to use the file name during duplicate check.
+	 *
+	 * @return boolean
+	 */
+	public function getDuplicateCheckUseFileName() {
+		return $this->duplicateCheckUseFileName;
+	}
+
+	/**
+	 * Sets whether to use the file path during duplicate check.
+	 *
+	 * @param boolean $useFilePath
+	 */
+	public function setDuplicateCheckUseFilepath($useFilePath) {
+		$this->duplicateCheckUseFilePath = (boolean) $useFilePath;
+	}
+
+	/**
+	 * Gets whether to use the file path during duplicate check.
+	 *
+	 * @return boolean
+	 */
+	public function getDuplicateCheckUseFilePath() {
+		return $this->duplicateCheckUseFilePath;
+	}
+
+	/**
+	 * Sets whether to use the referencing language during duplicate check.
+	 *
+	 * @param boolean $useLanguage
+	 */
+	public function setDuplicateCheckUseLanguage($useLanguage) {
+		$this->duplicateCheckUseLanguage = (boolean) $useLanguage;
+	}
+
+	/**
+	 * Gets whether to use the referencing language during duplicate check.
+	 *
+	 * @return boolean
+	 */
+	public function getDuplicateCheckUseLanguage() {
+		return $this->duplicateCheckUseLanguage;
+	}
+
+	/**
+	 * Sets whether to use the file's reference document ID during duplicate check.
+	 *
+	 * @param boolean $useReferenceDocumentId
+	 */
+	public function setDuplicateCheckUseReferenceDocumentId($useReferenceDocumentId) {
+		$this->duplicateCheckUseReferenceDocumentId = (boolean) $useReferenceDocumentId;
+	}
+
+	/**
+	 * Gets whether to use the file's reference document ID during duplicate check.
+	 *
+	 * @return boolean
+	 */
+	public function getDuplicateCheckUseReferenceDocumentId() {
+		return $this->duplicateCheckUseReferenceDocumentId;
+	}
+
+	/**
+	 * Sets the operator to use for duplicate checks.
+	 *
+	 * @param string $operator Either OR or AND.
+	 */
+	public function setDuplicateCheckOperator($operator) {
+		$allowedOperators = array('AND', 'OR');
+
+		if (in_array($operator, $allowedOperators)) {
+			$this->duplicateCheckOperator = $operator;
+		}
+	}
+
+	/**
+	 * Gets the operator to use for duplicate checks.
+	 *
+	 * @return string Either OR or AND.
+	 */
+	public function getDuplicateCheckOperator() {
+		return $this->duplicateCheckOperator;
 	}
 
 }

@@ -7,6 +7,16 @@ plugin.tx_solr {
 		files {
 				// defines which files types to index. Comma separated list of file type suffixes, example: pdf, doc, docx
 			allowedTypes = *
+
+			duplicateCheck {
+				operator = AND
+
+				useFileChecksum = 0
+				useFileName = 1
+				useFilePath = 1
+				useLanguage = 0
+				useReferenceDocumentId = 1
+			}
 		}
 
 	}

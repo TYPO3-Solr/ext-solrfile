@@ -123,8 +123,12 @@ class tx_solr_fileindexer_FileIndexer
 	 */
 	protected function addFilesToIndexQueue(array $files) {
 		$fileIndexQueue = t3lib_div::makeInstance('tx_solr_fileindexer_Queue');
+		/* @var $fileIndexQueue tx_solr_fileindexer_Queue */
 
 		foreach ($files as $file) {
+			$solrConfiguration = $file->getSite()->getSolrConfiguration();
+			$fileIndexQueue->setDuplicateCheckConfiguration($solrConfiguration['index.']['files.']['duplicateCheck.']);
+
 			$fileIndexQueue->updateFile($file);
 		}
 	}
