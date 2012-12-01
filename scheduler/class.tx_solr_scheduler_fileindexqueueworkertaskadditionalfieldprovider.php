@@ -55,7 +55,7 @@ class tx_solr_scheduler_FileIndexQueueWorkerTaskAdditionalFieldProvider implemen
 
 		$additionalFields['filesToIndexLimit'] = array(
 			'code'     => '<input type="text" name="tx_scheduler[filesToIndexLimit]" value="' . $taskInfo['filesToIndexLimit'] . '" />',
-			'label'    => 'LLL:EXT:solr/lang/locallang.xml:scheduler_fileindexqueueworker_field_filesToIndexLimit',
+			'label'    => 'LLL:EXT:solrfile/lang/locallang.xml:scheduler_fileindexqueueworker_field_filesToIndexLimit',
 			'cshKey'   => '',
 			'cshLabel' => ''
 		);
