@@ -147,6 +147,7 @@ class tx_solr_fileindexer_FileIndexer
 		$fileIndexed = FALSE;
 
 		$fileDocument = $this->getFileDocument($file);
+		$fileDocument = $this->processDocuments($file, $fileDocument);
 
 		$solr = t3lib_div::makeInstance('tx_solr_ConnectionManager')->getConnectionByRootPageId(
 			$file->getReferenceRootPageId(),
@@ -209,6 +210,12 @@ class tx_solr_fileindexer_FileIndexer
 			$document->setField('fileReferenceUrl',    $referencePageDocument->url);
 		}
 
+		if (!empty($referencePageDocument->endtime)) {
+			$document->setField('endtime', $endtime);
+		} else {
+			$document->setField('endtime', 0);
+		}
+
 		$document = $this->addDocumentFieldsFromPhpApi($document, $file);
 		$document = $this->addDocumentFieldsFromTyposcript($document, $file);
 
@@ -260,6 +267,35 @@ class tx_solr_fileindexer_FileIndexer
 		}
 
 		return $document;
+	}
+
+	/**
+	 * Process the document applying field processing instructions as defined
+	 * in TypoScript.
+	 *
+	 * FIXME duplicated code from tx_solr_indexqueue_Indexer::processDocuments()
+	 *
+	 * @param tx_solr_fileindexer_File $file File
+	 * @param Apache_Solr_Document $fileDocument unprocessed document
+	 * @return Apache_Solr_Document Processed document
+	 */
+	protected function processDocuments(tx_solr_fileindexer_File $file, Apache_Solr_Document $fileDocument) {
+		$documents = array($fileDocument);
+
+			// needs to respect the TS settings for the page the item is on, conditions may apply
+		$solrConfiguration = tx_solr_Util::getSolrConfigurationFromPageId($file->getSite()->getRootPageId());
+		$fieldProcessingInstructions = $solrConfiguration['index.']['fieldProcessingInstructions.'];
+
+			// same as in the FE indexer
+		if (is_array($fieldProcessingInstructions)) {
+			$service = t3lib_div::makeInstance('tx_solr_fieldprocessor_Service');
+			$service->processDocuments(
+				$documents,
+				$fieldProcessingInstructions
+			);
+		}
+
+		return $documents[0];
 	}
 
 }
