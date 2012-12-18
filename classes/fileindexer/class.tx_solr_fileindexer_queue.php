@@ -436,9 +436,10 @@ class tx_solr_fileindexer_Queue extends tx_solr_indexqueue_Queue implements tx_s
 		);
 
 		foreach ($fileIndexQueueRecords as $fileIndexQueueRecord) {
-				$file = tx_solr_fileindexer_File::getFileFromFileIndexQueueRecord($fileIndexQueueRecord);
+				$file     = tx_solr_fileindexer_File::getFileFromFileIndexQueueRecord($fileIndexQueueRecord);
+				$filePath = urldecode($file->getAbsolutePath());
 
-				if (file_exists($file->getAbsolutePath())) {
+				if (file_exists($filePath)) {
 					$filesToIndex[] = $file;
 				} else {
 					t3lib_div::devLog('File does not exist', 'solr', 0, array($file));

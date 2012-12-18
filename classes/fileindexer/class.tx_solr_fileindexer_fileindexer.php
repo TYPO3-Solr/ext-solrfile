@@ -186,7 +186,7 @@ class tx_solr_fileindexer_FileIndexer
 		)); // @see page indexer / TS processing for timestamp->ISO conversion
 
 			// content
-		$document->setField('title',    $file->getName());
+		$document->setField('title',    urldecode($file->getName()));
 		$document->setField('content',  $file->getContent());
 
 			// access
