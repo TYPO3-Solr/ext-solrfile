@@ -31,7 +31,7 @@
  * @package	TYPO3
  * @subpackage	solr
  */
-class tx_solr_scheduler_FileIndexQueueWorkerTask extends tx_scheduler_Task {
+class tx_solr_scheduler_FileIndexQueueWorkerTask extends tx_scheduler_Task implements tx_scheduler_ProgressProvider {
 
 	protected $filesToIndexLimit = 10;
 
@@ -124,6 +124,33 @@ class tx_solr_scheduler_FileIndexQueueWorkerTask extends tx_scheduler_Task {
 		}
 
 		return $message;
+	}
+
+	/**
+	 * Gets the indexing progress.
+	 *
+	 * @return float Indexing progress as a two decimal precision float. f.e. 44.87
+	 */
+	public function getProgress() {
+		$itemsIndexedPercentage = 0.0;
+
+		$totalItemsCount = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
+			'uid',
+			'tx_solr_indexqueue_file'
+		);
+		$remainingItemsCount = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows(
+			'uid',
+			'tx_solr_indexqueue_file',
+			'changed > indexed'
+		);
+		$itemsIndexedCount = $totalItemsCount - $remainingItemsCount;
+
+		if ($totalItemsCount > 0) {
+			$itemsIndexedPercentage = $itemsIndexedCount * 100 / $totalItemsCount;
+			$itemsIndexedPercentage = round($itemsIndexedPercentage, 2);
+		}
+
+		return $itemsIndexedPercentage;
 	}
 
 	public function getFilesToIndexLimit() {
