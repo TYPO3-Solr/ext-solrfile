@@ -24,50 +24,61 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['solr']['IndexQueueIndexer']['indexItemAd
 
 	// registering file indexer file detectors
 
-tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
-	'tx_solr_fileindexer_filedetector_Fileadmin',
-	array(
-		'uploads' => 'media,select_key',
-		'text'    => 'bodytext,header_link',
-		'textpic' => 'bodytext,header_link',
-		'table'   => 'bodytext,header_link'
-	)
-);
+$typo3Version = 0;
+if (class_exists('t3lib_utility_VersionNumber')) {
+	$typo3Version = t3lib_utility_VersionNumber::convertVersionNumberToInteger(TYPO3_version);
+} else {
+	$typo3Version = t3lib_div::int_from_ver(TYPO3_version);
+}
 
-tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
-	'tx_solr_fileindexer_filedetector_CssFileLinks',
-	array('uploads' => 'media'),
-	'css_filelinks'
-);
+// Register traditional file detectors for TYPO3 < 6.0 only
+if ($typo3Version < 6000000) {
 
-tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
-	'tx_solr_fileindexer_filedetector_Dam',
-	array(
-		'text'    => 'bodytext',
-		'textpic' => 'bodytext'
-	),
-	'dam'
-);
+	tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
+		'tx_solr_fileindexer_filedetector_Fileadmin',
+		array(
+			'uploads' => 'media,select_key',
+			'text'    => 'bodytext,header_link',
+			'textpic' => 'bodytext,header_link',
+			'table'   => 'bodytext,header_link'
+		)
+	);
 
-tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
-	'tx_solr_fileindexer_filedetector_DamFileLinks',
-	array('uploads' => 'tx_damfilelinks_filelinks'),
-	'dam_filelinks'
-);
+	tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
+		'tx_solr_fileindexer_filedetector_CssFileLinks',
+		array('uploads' => 'media'),
+		'css_filelinks'
+	);
 
-#tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
-#	'tx_solr_fileindexer_filedetector_DamTtContent',
-#	array('image' => 'tx_damttcontent_files'),
-#	'dam_ttcontent'
-#);
+	tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
+		'tx_solr_fileindexer_filedetector_Dam',
+		array(
+			'text'    => 'bodytext',
+			'textpic' => 'bodytext'
+		),
+		'dam'
+	);
 
-tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
-	'tx_solr_fileindexer_filedetector_Templavoila',
-	array(
-		'templavoila_pi1' => 'tx_templavoila_flex',
-	),
-	'templavoila'
-);
+	tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
+		'tx_solr_fileindexer_filedetector_DamFileLinks',
+		array('uploads' => 'tx_damfilelinks_filelinks'),
+		'dam_filelinks'
+	);
+
+	#tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
+	#	'tx_solr_fileindexer_filedetector_DamTtContent',
+	#	array('image' => 'tx_damttcontent_files'),
+	#	'dam_ttcontent'
+	#);
+
+	tx_solr_fileindexer_FileDetectorFactory::registerFileDetector(
+		'tx_solr_fileindexer_filedetector_Templavoila',
+		array(
+			'templavoila_pi1' => 'tx_templavoila_flex',
+		),
+		'templavoila'
+	);
+}
 
 	// records, fileamdin
 tx_solr_fileindexer_AttachmentDetectorFactory::registerAttachmentDetector(
