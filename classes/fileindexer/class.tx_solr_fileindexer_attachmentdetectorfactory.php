@@ -52,7 +52,7 @@ class tx_solr_fileindexer_AttachmentDetectorFactory implements t3lib_Singleton {
 
 		$site = $item->getSite();
 		$solrConfiguration = $site->getSolrConfiguration();
-		$itemTypeIndexQueueConfiguration = $solrConfiguration['index.']['queue.'][$item->getType() . '.'];
+		$itemTypeIndexQueueConfiguration = $solrConfiguration['index.']['queue.'][$item->getIndexingConfigurationName() . '.'];
 
 		$attachmentFields = array();
 		if (isset($itemTypeIndexQueueConfiguration['attachments.'])
