@@ -1,6 +1,7 @@
 2013-03-27  Stefan Sprenger  <stefan.sprenger@dkd.de>
 
   * Fix retrieval of index queue configuration
+	* Load TCA of the indexed item's type
 
 2012-12-18  Stefan Sprenger  <stefan.sprenger@dkd.de>
 

@@ -62,6 +62,7 @@ class tx_solr_fileindexer_AttachmentDetectorFactory implements t3lib_Singleton {
 		}
 
 		if (!empty($attachmentFields)) {
+			t3lib_div::loadTCA($item->getType());
 			$typeColumnsTca = $GLOBALS['TCA'][$item->getType()]['columns'];
 
 			$fieldTypeMatchingAttachmentDetectors = array();
