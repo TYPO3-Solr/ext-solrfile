@@ -85,6 +85,7 @@ tx_solr_fileindexer_AttachmentDetectorFactory::registerAttachmentDetector(
 	'tx_solr_fileindexer_attachmentdetector_Fileadmin',
 	array(
 		'group:file',
+		'group:file_reference',
 		'text'
 	)
 );

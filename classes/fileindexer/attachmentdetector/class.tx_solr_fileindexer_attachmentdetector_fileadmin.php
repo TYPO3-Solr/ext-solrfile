@@ -45,7 +45,7 @@ class tx_solr_fileindexer_attachmentdetector_Fileadmin extends tx_solr_fileindex
 				$files = $this->findFilesInGroupFileField($fieldName);
 				break;
 			case 'group:file_reference':
-					// not implemented yet
+				$files = $this->findFilesInGroupFileReferenceField($fieldName);
 				break;
 			case 'group:folder':
 					// not implemented yet
@@ -74,6 +74,26 @@ class tx_solr_fileindexer_attachmentdetector_Fileadmin extends tx_solr_fileindex
 
 			foreach ($filesInField as $file) {
 				$files[] = $uploadsFolder . '/' . $file;
+			}
+		}
+
+		return $files;
+	}
+
+	/**
+	 * Finds files from field of type "group" and internal type "file_reference".
+	 *
+	 * @return array An array of files with path relative to the TYPO3 site root.
+	 */
+	protected function findFilesInGroupFileReferenceField($fieldName) {
+		$files = array();
+		$record = $this->indexQueueItem->getRecord();
+
+		if (!empty($record[$fieldName])) {
+			$filesInField  = t3lib_div::trimExplode(',', $record[$fieldName]);
+
+			foreach ($filesInField as $file) {
+				$files[] = $file;
 			}
 		}
 

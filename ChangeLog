@@ -2,6 +2,7 @@
 
   * Fix retrieval of index queue configuration
 	* Load TCA of the indexed item's type
+	* Add support for field type group:file_reference
 
 2012-12-18  Stefan Sprenger  <stefan.sprenger@dkd.de>
 
