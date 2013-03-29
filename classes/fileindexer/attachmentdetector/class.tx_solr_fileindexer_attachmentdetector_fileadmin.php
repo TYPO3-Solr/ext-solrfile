@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2012 Ingo Renner <ingo@typo3.org>
+*  (c) 2012-2013 Ingo Renner <ingo@typo3.org>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -61,6 +61,7 @@ class tx_solr_fileindexer_attachmentdetector_Fileadmin extends tx_solr_fileindex
 	/**
 	 * Finds files from field of type "group" and internal type "file".
 	 *
+	 * @param string $fieldName Field name
 	 * @return array An array of files with path relative to the TYPO3 site root.
 	 */
 	protected function findFilesInGroupFileField($fieldName) {
@@ -83,6 +84,7 @@ class tx_solr_fileindexer_attachmentdetector_Fileadmin extends tx_solr_fileindex
 	/**
 	 * Finds files from field of type "group" and internal type "file_reference".
 	 *
+	 * @param string $fieldName Field name
 	 * @return array An array of files with path relative to the TYPO3 site root.
 	 */
 	protected function findFilesInGroupFileReferenceField($fieldName) {
@@ -103,6 +105,7 @@ class tx_solr_fileindexer_attachmentdetector_Fileadmin extends tx_solr_fileindex
 	/**
 	 * Finds files from the text field.
 	 *
+	 * @param string $fieldName Field name
 	 * @return array An array of files with path relative to the TYPO3 site root.
 	 */
 	protected function findFilesInTextField($fieldName) {
@@ -129,7 +132,7 @@ class tx_solr_fileindexer_attachmentdetector_Fileadmin extends tx_solr_fileindex
 	 * Finds typolink tags in a content string.
 	 *
 	 * @todo move to typo3 content extractor
-	 * @param string HTML content
+	 * @param string $content HTML content
 	 * @return array An array of <link> tags
 	 */
 	protected function getTypoLinkTags($content) {
