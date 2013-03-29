@@ -1,3 +1,7 @@
+2013-03-29  Ingo Renner  <ingo.renner@dkd.de>
+
+	* Fix fileadmin file detector to respect additional configuration in select key field, credits Birgit Rühring
+
 2013-03-27  Stefan Sprenger  <stefan.sprenger@dkd.de>
 
 	* Fix retrieval of index queue configuration

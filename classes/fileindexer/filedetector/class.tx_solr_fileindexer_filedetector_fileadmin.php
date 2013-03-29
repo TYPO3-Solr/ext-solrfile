@@ -107,6 +107,11 @@ class tx_solr_fileindexer_filedetector_Fileadmin extends tx_solr_fileindexer_fil
 			}
 
 			$fileListPath = $this->contentElementRecord['select_key'];
+			// select_key can have additional configuration parameters, example:
+			// fileadmin/path/ | | name |
+			$parts = explode('|', $fileListPath);
+			$fileListPath = trim($parts[0]);
+
 			if (substr($fileListPath, -1) != '/') {
 				$fileListPath .= '/';
 			}
