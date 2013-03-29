@@ -1,6 +1,6 @@
 2013-03-27  Stefan Sprenger  <stefan.sprenger@dkd.de>
 
-  * Fix retrieval of index queue configuration
+	* Fix retrieval of index queue configuration
 	* Load TCA of the indexed item's type
 	* Add support for field type group:file_reference
 
