@@ -1,6 +1,7 @@
 2013-04-11  Ingo Renner  <ingo.renner@dkd.de>
 
 	* [BUGFIX] Missing initialization of $GLOBALS[TT], credits Franz G. Jahn <franzjahn@cron-it.de>
+	* [BUGFIX] #45678: non-default endtime in file reference document causes Solr to throw an exception
 
 2013-03-29  Ingo Renner  <ingo.renner@dkd.de>
 

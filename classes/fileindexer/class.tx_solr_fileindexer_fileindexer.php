@@ -211,7 +211,7 @@ class tx_solr_fileindexer_FileIndexer
 		}
 
 		if (!empty($referencePageDocument->endtime)) {
-			$document->setField('endtime', $endtime);
+			$document->setField('endtime', $referencePageDocument->endtime);
 		} else {
 			$document->setField('endtime', 0);
 		}
