@@ -261,6 +261,7 @@ class tx_solr_fileindexer_FileIndexer
 			}
 
 				// need to instantiate TSFE to make content objects work properly
+			$GLOBALS['TT']   = t3lib_div::makeInstance('t3lib_timeTrackNull');
 			$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $site->getRootPageId(), 0);
 			$document = parent::addDocumentFieldsFromTyposcript($document, $indexingConfiguration, $data);
 			unset($GLOBALS['TSFE']);
