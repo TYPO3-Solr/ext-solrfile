@@ -191,7 +191,6 @@ class tx_solr_fileindexer_FileIndexer
 
 			// access
 		$document->setField('access',   $file->getAccess());
-		// TODO add endtime of content element / page (fallback chain)
 
 			// file meta data, reference
 		$document->setField('fileMimeType',            $file->getMimeType());
