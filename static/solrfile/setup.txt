@@ -20,7 +20,7 @@ plugin.tx_solr {
 		}
 
 		queue.tx_solr_file.fields {
-
+			sortTitle_stringS = title
 		}
 
 	}
