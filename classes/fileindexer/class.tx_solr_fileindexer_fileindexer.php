@@ -172,6 +172,8 @@ class tx_solr_fileindexer_FileIndexer
 		$document = t3lib_div::makeInstance('Apache_Solr_Document');
 		$site     = $file->getSite();
 
+		$referencePageDocument = $file->getReferencePageDocument();
+
 		$document->setField('id',       tx_solr_Util::getFileDocumentId($file));
 		$document->setField('site',     $site->getDomain());
 		$document->setField('siteHash', $site->getSiteHash());
@@ -181,6 +183,10 @@ class tx_solr_fileindexer_FileIndexer
 			// system fields
 		$document->setField('uid',      $file->getFileIndexQueueId());
 		$document->setField('pid',      $file->getReferencePageId());
+		// most operating systems do not track file creation time,
+		// so we're using the linking page's creation time
+		// FAL may offer that information (time of upload?)
+		$document->setField('created',  $referencePageDocument->created);
 		$document->setField('changed',  tx_solr_Util::timestampToIso(
 			filemtime($file->getAbsolutePath())
 		)); // @see page indexer / TS processing for timestamp->ISO conversion
@@ -203,7 +209,7 @@ class tx_solr_fileindexer_FileIndexer
 		$document->setField('fileReferenceType',       $file->getReferenceType());
 		$document->setField('fileReferenceUid',        $file->getReferenceUniqueId());
 
-		$referencePageDocument = $file->getReferencePageDocument();
+
 		if (!is_null($referencePageDocument)) {
 			$document->setField('fileReferenceTitle',  $referencePageDocument->title);
 			$document->setField('fileReferenceUrl',    $referencePageDocument->url);
