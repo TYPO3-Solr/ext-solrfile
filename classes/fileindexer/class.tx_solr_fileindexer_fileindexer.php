@@ -187,9 +187,7 @@ class tx_solr_fileindexer_FileIndexer
 		// so we're using the linking page's creation time
 		// FAL may offer that information (time of upload?)
 		$document->setField('created',  $referencePageDocument->created);
-		$document->setField('changed',  tx_solr_Util::timestampToIso(
-			filemtime($file->getAbsolutePath())
-		)); // @see page indexer / TS processing for timestamp->ISO conversion
+		$document->setField('changed', filemtime($file->getAbsolutePath()));
 
 			// content
 		$document->setField('title',    urldecode($file->getName()));
